@@ -1,0 +1,56 @@
+from django.urls import path
+from human.views import (
+    VerifCodeCreationView,
+    VerifCodeGetView,
+    LoginView,
+    AccountUpdateView,
+    TeacherCreateView,
+    TeacherGetIdView,
+    TeacherUpdateDeleteAView,
+    SubjectCreateView,
+    SubjectListView,
+    SubjecStudentListView,
+    SubjecGetView,
+    StudentCreateView,
+    StudentUpdataeDeleteView,
+    StudentListView,
+    StudentGetView,
+    StudentGetGroupView,
+    AddStudentView,
+    GroupCreateView,
+    GroupUpdateView,
+    GroupListView,
+)
+
+app_name = "human"
+
+urlpatterns = [
+    path("code/create/", VerifCodeCreationView.as_view()),
+    path("code/get/<str:code>/", VerifCodeGetView.as_view()),
+    path("user/auth/", LoginView.as_view()),
+    path("user/update/<str:email>/", AccountUpdateView.as_view()),
+    path("teacher/create/", TeacherCreateView.as_view()),
+    path("teacher/get/<str:email>/", TeacherGetIdView.as_view()),
+    path("teacher/<str:email>/", TeacherUpdateDeleteAView.as_view()),
+    path("subject/create/", SubjectCreateView.as_view()),
+    path(
+        "subject/teacherlist/<int:fk>/",
+        SubjectListView.as_view(),
+        name="subject-teacher-list",
+    ),
+    path(
+        "subject/studentlist/<str:name>/",
+        SubjecStudentListView.as_view(),
+        name="subject-student-list",
+    ),
+    path("subject/get/<str:title>/", SubjecGetView.as_view(), name="subject-get"),
+    path("student/create/", StudentCreateView.as_view()),
+    path("student/update/<str:email>/", StudentUpdataeDeleteView.as_view()),
+    path("student/all/", StudentListView.as_view()),
+    path("student/get/<str:email>", StudentGetView.as_view()),
+    path("student/get/group/<str:email>/", StudentGetGroupView.as_view()),
+    path("student/add/<str:email>/", AddStudentView.as_view()),
+    path("group/create/", GroupCreateView.as_view()),
+    path("group/update/<str:name>/", GroupUpdateView.as_view()),
+    path("group/all/", GroupListView.as_view()),
+]

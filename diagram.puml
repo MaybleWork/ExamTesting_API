@@ -1,0 +1,209 @@
+@startuml 
+
+    class "Explanation of the symbols used" as DESCRIPTION #FFF {
+    - AutoField (identifiers)
+    ..
+    + Regular field (anything)
+    ..
+    # ForeignKey (ManyToMany)
+    ..
+    ~ ForeignKey (OneToOne, OneToMany)
+    --
+}
+
+
+class "course.Test <Course>" as course.Test #f4d6f1 {
+    test
+    ..
+    Test(id, title, max_mark, number_of_attemps, visibility, automate_checking,
+question_randomizer, backstep, penalty, level, test_duration, start_date,
+end_date, count_of_question, subject)
+    --
+    + id (BigAutoField) - 
+    + title (CharField) - 
+    + max_mark (PositiveSmallIntegerField) - 
+    + number_of_attemps (PositiveSmallIntegerField) - 
+    + visibility (BooleanField) - 
+    + automate_checking (BooleanField) - 
+    + question_randomizer (BooleanField) - 
+    + backstep (BooleanField) - 
+    + penalty (PositiveSmallIntegerField) - 
+    + level (PositiveSmallIntegerField) - 
+    + test_duration (DurationField) - 
+    + start_date (DateTimeField) - 
+    + end_date (DateTimeField) - 
+    + count_of_question (PositiveSmallIntegerField) - 
+    ~ subject (ForeignKey) - 
+    --
+}
+course.Test -- human.Subject
+
+
+class "course.Question <Course>" as course.Question #f4d6f1 {
+    question
+    ..
+    Question(id, text, test)
+    --
+    + id (BigAutoField) - 
+    + text (CharField) - 
+    ~ test (ForeignKey) - 
+    --
+}
+course.Question -- course.Test
+
+
+class "course.Answer <Course>" as course.Answer #f4d6f1 {
+    answer
+    ..
+    Answer(id, text, is_test, is_multitest, is_text, is_correct, mark, question)
+    --
+    + id (BigAutoField) - 
+    + text (CharField) - 
+    + is_test (BooleanField) - 
+    + is_multitest (BooleanField) - 
+    + is_text (BooleanField) - 
+    + is_correct (BooleanField) - 
+    + mark (PositiveSmallIntegerField) - 
+    ~ question (ForeignKey) - 
+    --
+}
+course.Answer -- course.Question
+
+
+class "course.Result <Course>" as course.Result #f4d6f1 {
+    result
+    ..
+    Result(id, name, final_mark, number_of_attemps, student, test)
+    --
+    + id (BigAutoField) - 
+    + name (CharField) - 
+    + final_mark (PositiveSmallIntegerField) - 
+    + number_of_attemps (PositiveSmallIntegerField) - 
+    ~ student (ForeignKey) - 
+    ~ test (ForeignKey) - 
+    # list_answers (ManyToManyField) - 
+    --
+}
+course.Result -- human.Student
+course.Result -- course.Test
+course.Result *--* course.Answer
+
+
+class "human.Account <Human>" as human.Account #e2f4d6 {
+    account
+    ..
+    Account(id, password, last_login, is_superuser, email, user_type, name,
+last_name, surname, is_active, is_staff)
+    --
+    + id (BigAutoField) - 
+    + password (CharField) - 
+    + last_login (DateTimeField) - 
+    + is_superuser (BooleanField) - Designates that this user has all permissions
+without explicitly assigning them.
+    + email (EmailField) - 
+    + user_type (CharField) - 
+    + name (CharField) - 
+    + last_name (CharField) - 
+    + surname (CharField) - 
+    + is_active (BooleanField) - 
+    + is_staff (BooleanField) - 
+    # groups (ManyToManyField) - 
+    # user_permissions (ManyToManyField) - 
+    --
+}
+
+
+class "human.Teacher <Human>" as human.Teacher #e2f4d6 {
+    teacher
+    ..
+    Teacher(id, password, last_login, is_superuser, email, user_type, name,
+last_name, surname, is_active, is_staff, account_ptr)
+    --
+    + id (BigAutoField) - 
+    + password (CharField) - 
+    + last_login (DateTimeField) - 
+    + is_superuser (BooleanField) - Designates that this user has all permissions
+without explicitly assigning them.
+    + email (EmailField) - 
+    + user_type (CharField) - 
+    + name (CharField) - 
+    + last_name (CharField) - 
+    + surname (CharField) - 
+    + is_active (BooleanField) - 
+    + is_staff (BooleanField) - 
+    ~ account_ptr (OneToOneField) - 
+    # groups (ManyToManyField) - 
+    # user_permissions (ManyToManyField) - 
+    --
+}
+human.Teacher -- human.Account
+
+
+class "human.Group <Human>" as human.Group #e2f4d6 {
+    group
+    ..
+    Group(id, name)
+    --
+    + id (BigAutoField) - 
+    + name (CharField) - 
+    # teacher (ManyToManyField) - 
+    --
+}
+human.Group *--* human.Teacher
+
+
+class "human.Student <Human>" as human.Student #e2f4d6 {
+    student
+    ..
+    Student(id, password, last_login, is_superuser, email, user_type, name,
+last_name, surname, is_active, is_staff, account_ptr, group)
+    --
+    + id (BigAutoField) - 
+    + password (CharField) - 
+    + last_login (DateTimeField) - 
+    + is_superuser (BooleanField) - Designates that this user has all permissions
+without explicitly assigning them.
+    + email (EmailField) - 
+    + user_type (CharField) - 
+    + name (CharField) - 
+    + last_name (CharField) - 
+    + surname (CharField) - 
+    + is_active (BooleanField) - 
+    + is_staff (BooleanField) - 
+    ~ account_ptr (OneToOneField) - 
+    ~ group (ForeignKey) - 
+    # groups (ManyToManyField) - 
+    # user_permissions (ManyToManyField) - 
+    --
+}
+human.Student -- human.Account
+human.Student -- human.Group
+
+
+class "human.Subject <Human>" as human.Subject #e2f4d6 {
+    subject
+    ..
+    Subject(id, title, group, teacher)
+    --
+    + id (BigAutoField) - 
+    + title (CharField) - 
+    ~ group (ForeignKey) - 
+    ~ teacher (ForeignKey) - 
+    --
+}
+human.Subject -- human.Group
+human.Subject -- human.Teacher
+
+
+class "human.Verification <Human>" as human.Verification #e2f4d6 {
+    verification
+    ..
+    Verification(id, code)
+    --
+    + id (BigAutoField) - 
+    + code (CharField) - 
+    --
+}
+
+
+@enduml
